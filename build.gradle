@@ -1,0 +1,31 @@
+plugins {
+    id 'org.springframework.boot' version '3.1.2'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'java'
+}
+
+group = 'translate-api'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+repositories {
+    // other repositories
+    maven {
+        name = "dynomakeRepository"
+        url = uri("https://maven.dynomake.space/releases")
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'org.jfree:jfreechart:1.5.0'
+    implementation 'org.jfree:jcommon:1.0.24'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.3' // Replace with the latest version
+    implementation "space.dynomake:libretranslate-java:1.0.9"
+}
