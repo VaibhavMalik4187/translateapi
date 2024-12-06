@@ -28,4 +28,5 @@ dependencies {
     implementation 'org.jfree:jcommon:1.0.24'
     implementation 'org.apache.httpcomponents:httpclient:4.5.3' // Replace with the latest version
     implementation "space.dynomake:libretranslate-java:1.0.9"
+    implementation 'org.json:json:20230227'
 }
