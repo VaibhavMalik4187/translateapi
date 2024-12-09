@@ -30,4 +30,5 @@ dependencies {
     implementation "space.dynomake:libretranslate-java:1.0.9"
     implementation 'org.json:json:20230227'
     implementation 'com.opencsv:opencsv:5.9'
+    implementation 'software.amazon.awssdk:translate:2.20.22'
 }

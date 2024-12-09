@@ -54,7 +54,7 @@ class Pair<T, U> {
 public class ReadCSVAndTranslateData {
     public static void main(String[] args) {
         Map<Pair<String, String>, Integer> langFrequencyMap = new HashMap<>();
-        String csvFile = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/filtered-data.csv";
+        String csvFile = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/google-v2-responses.csv";
         try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
             String[] nextLine;
             int counter = 0;
@@ -65,6 +65,8 @@ public class ReadCSVAndTranslateData {
                 String targetLanguage = nextLine[1];
                 String requestBody = nextLine[2];
                 String responseBody = nextLine[3];
+
+                LibreTranslate.libreTranslate(requestBody, "auto", targetLanguage);
 
                 System.out.println("Source Language: " + sourceLanguage);
                 System.out.println("Target Language: " + targetLanguage);
