@@ -49,6 +49,7 @@ class Pair<T, U> {
 public class ReadAndTranslateData {
     public static final String googleTranslateResponsesFile = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/google-v2-responses.json";
     public static final String libreResponseFile = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/libre-responses.json";
+    public static final String awsResponseFile = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/aws-responses.json";
 
     public static List<Pair<String, String>> getTextAndTargetLanguageSamples(String filePath) {
         List<Pair<String, String>> texts = new ArrayList<>();
@@ -81,14 +82,19 @@ public class ReadAndTranslateData {
 
         for (Pair<String, String> textLanguagePair: getTextAndTargetLanguageSamples(googleTranslateResponsesFile)) {
             System.out.println("Translating string #" + counter++);
-            responses.add(LibreTranslate.libreTranslate(textLanguagePair.getFirst(), "auto", textLanguagePair.getSecond()));
+            // responses.add(LibreTranslate.libreTranslate(textLanguagePair.getFirst(), "auto", textLanguagePair.getSecond()));
+            responses.add(AWSTranslate.translate(textLanguagePair.getFirst(), "auto", textLanguagePair.getSecond()));
+            ConvertToJson.saveJsonToFile(responses, awsResponseFile);
+            /*
             try {
                 TimeUnit.MILLISECONDS.sleep(500);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+             */
         }
 
-        ConvertToJson.saveJsonToFile(responses, libreResponseFile);
+        // ConvertToJson.saveJsonToFile(responses, libreResponseFile);
+        ConvertToJson.saveJsonToFile(responses, awsResponseFile);
     }
 }

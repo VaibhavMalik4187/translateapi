@@ -39,10 +39,23 @@ def extract_response_bodies(data, key):
 
 def compare_responses(api_responses, reference_responses):
   average_score = 0
+  skipped = 0
 
   for i in range(len(api_responses)):
     translated = api_responses[i]
     reference = reference_responses[i]
+
+    # Check for None values before tokenization
+    # if translated is None or reference is None:
+    if translated is None:
+      print(f"Skipping comparison for pair {i+1}: API response is None")
+      skipped += 1
+      continue
+    elif reference is None:
+      print(f"Skipping comparison for pair {i+1}: Reference response is None")
+      skipped += 1
+      continue
+
 
     # Tokenize the strings (modify for your use case)
     reference_tokens = reference.split()
@@ -50,14 +63,21 @@ def compare_responses(api_responses, reference_responses):
 
     # Calculate METEOR score for this pair (optional, modify for your use case)
     score = meteor_score([reference_tokens], translated_tokens)
+    if score < 0.5:
+        print("API translation: " + api_responses[i])
+        print("Reference translation: " + reference_responses[i])
+        print("-------------------------------------------------------------------")
     average_score += score
+    print("Average score: " + str(float(average_score) / (i + 1 - skipped)))
+
     print(f"METEOR Score for string {i+1}: {score:.4f}")
-  
-  average_score = float(average_score) / len(api_responses)
+
+  average_score = float(average_score) / (len(api_responses) - skipped)
   return average_score
 
 def main():
-  api_translations_file_path = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/libre-responses.json"
+  # api_translations_file_path = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/libre-responses.json"
+  api_translations_file_path = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/aws-responses.json"
   reference_translations_file_path = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/google-v2-responses.json"
 
   # Read JSON files
