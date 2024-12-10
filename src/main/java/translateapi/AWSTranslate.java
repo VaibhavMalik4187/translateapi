@@ -11,25 +11,31 @@ public class AWSTranslate {
     public static final String ACCESS_KEY = System.getenv("AWS_ACCESS_KEY");
     public static final String SECRET_KEY = System.getenv("AWS_SECRET_KEY");
 
-    public static String translate(String textToTranslate , String TargetLanguage){
+    public static UniversalTranslationResponse translate(String text, String sourceLang, String targetLang){
+        try {
+            AwsBasicCredentials awsCreds = AwsBasicCredentials.create(ACCESS_KEY , SECRET_KEY);
+            TranslateClient translateClient = TranslateClient.builder()
+                    .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+                    .region(Region.AP_SOUTH_1)
+                    .build();
+            TranslateTextRequest translateTextRequest = TranslateTextRequest.builder()
+                    .text(text)
+                    .sourceLanguageCode(sourceLang)
+                    .targetLanguageCode(targetLang)
+                    .build();
+            long startTime = System.currentTimeMillis();
+            TranslateTextResponse response = translateClient.translateText(translateTextRequest);
+            long endTime = System.currentTimeMillis();
 
-        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(ACCESS_KEY , SECRET_KEY);
-        TranslateClient translateClient = TranslateClient.builder()
-                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .region(Region.AP_SOUTH_1)
-                .build();
-        TranslateTextRequest translateTextRequest = TranslateTextRequest.builder()
-                .text(textToTranslate)
-                .sourceLanguageCode("auto")
-                .targetLanguageCode(TargetLanguage)
-                .build();
-        long starttime = System.currentTimeMillis();
-        TranslateTextResponse response = translateClient.translateText(translateTextRequest);
-        long endtime = System.currentTimeMillis();
-        System.out.println("Length of string:- " + textToTranslate.length() + "and " + "Time taken is:- " + (endtime - starttime));
-        translateClient.close();
-        return  response.translatedText() ;
+            UniversalTranslationResponse resp = new UniversalTranslationResponse(sourceLang, targetLang, text, response.translatedText(), (endTime - startTime), text.length());
 
+            System.out.println("Length of string:- " + text.length() + "and " + "Time taken is:- " + (endTime - startTime));
+            translateClient.close();
+            return  resp;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new UniversalTranslationResponse();
+        }
     }
 
     public static void main(String[] args) {

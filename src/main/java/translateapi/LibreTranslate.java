@@ -6,12 +6,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import com.google.gson.JsonObject;
+import org.json.JSONObject;
 import space.dynomake.libretranslate.Language;
 
 public class LibreTranslate {
     public static final String API_URL = "http://localhost:5000/translate";
 
-    public static long libreTranslate(String text, String sourceLang, String targetLang) {
+    public static UniversalTranslationResponse libreTranslate(String text, String sourceLang, String targetLang) {
         try {
             JsonObject payload = new JsonObject();
             payload.addProperty("q", text);
@@ -31,16 +32,22 @@ public class LibreTranslate {
             long startTime = System.currentTimeMillis(); // Start timing
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             long endTime = System.currentTimeMillis(); // End timing
+            JSONObject jsonObject= new JSONObject(response.body());
+            String translatedText = jsonObject.getString("translatedText");
 
+            UniversalTranslationResponse resp = new UniversalTranslationResponse(sourceLang, targetLang, text, translatedText, (endTime - startTime), text.length());
+
+            /*
             // Print the response and latency
             System.out.println("Original text: " + text);
             System.out.println("Response: " + response.body());
             System.out.println("Text length: " + text.length());
             System.out.println("Latency: " + (endTime - startTime) + " ms");
-            return (endTime - startTime);
+             */
+            return resp;
         } catch (Exception e) {
             e.printStackTrace();
-            return -1;
+            return new UniversalTranslationResponse();
         }
     }
 
