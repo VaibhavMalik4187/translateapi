@@ -1,22 +1,12 @@
 package translateapi;
 
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
-import org.apache.tomcat.util.json.JSONParser;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 class Pair<T, U> {
     private final T first;
@@ -56,10 +46,11 @@ class Pair<T, U> {
     }
 }
 
-public class ReadCSVAndTranslateData {
+public class ReadAndTranslateData {
     public static final String googleTranslateResponsesFile = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/google-v2-responses.json";
+    public static final String libreResponseFile = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/libre-responses.json";
 
-    public static List<Pair<String, String>> getSampleTexts(String filePath) {
+    public static List<Pair<String, String>> getTextAndTargetLanguageSamples(String filePath) {
         List<Pair<String, String>> texts = new ArrayList<>();
 
         try {
@@ -85,11 +76,19 @@ public class ReadCSVAndTranslateData {
     }
 
     public static void main(String[] args) {
-        /*
-        for (Pair<String, String> textLanguagePair: getSampleTexts(googleTranslateResponsesFile)) {
-            System.out.println(textLanguagePair);
-            System.out.println("----------------");
+        ArrayList<UniversalTranslationResponse> responses = new ArrayList<>();
+        int counter = 0;
+
+        for (Pair<String, String> textLanguagePair: getTextAndTargetLanguageSamples(googleTranslateResponsesFile)) {
+            System.out.println("Translating string #" + counter++);
+            responses.add(LibreTranslate.libreTranslate(textLanguagePair.getFirst(), "auto", textLanguagePair.getSecond()));
+            try {
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-         */
+
+        ConvertToJson.saveJsonToFile(responses, libreResponseFile);
     }
 }
