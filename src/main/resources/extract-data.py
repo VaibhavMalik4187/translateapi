@@ -1,5 +1,6 @@
 import json
 import csv
+import sys
 
 def write_to_csv(json_data, json_file):
     data = []
@@ -30,9 +31,16 @@ def write_to_csv(json_data, json_file):
         json.dump(data, f, indent=4)
 
 
-input_file = '/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/final-data.json'
-output_file = '/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/filtered-data.json'
+if len(sys.argv) < 3:
+    print("Usage: python script.py <input_file> <output_file>")
+    sys.exit(1)
 
-with open(input_file, 'r') as f:
+input_filename = sys.argv[1]
+output_filename = sys.argv[2]
+
+input_file_path = '/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/' + input_filename
+output_file_path = '/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/' + output_filename
+
+with open(input_file_path, 'r') as f:
     json_data = json.load(f)
-write_to_csv(json_data, output_file)
+write_to_csv(json_data, output_file_path)
