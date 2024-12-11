@@ -48,10 +48,9 @@ class Pair<T, U> {
 }
 
 public class ReadAndTranslateData {
-    public static final String googleTranslateResponsesFile = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/google-v2-responses.json";
-    public static final String googleTranslateV2ResponsesFile = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/google-v2-responses-with-latencies.json";
-    // public static final String libreResponseFile = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/libre-responses.json";
-    // public static final String awsResponseFile = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/aws-responses.json";
+    public static final String resourceBasePath = "/Users/vaibhav.malik/Downloads/translateapi/src/main/resources/";
+    public static final String googleTranslateResponsesFile = resourceBasePath + "google-v2-responses.json";
+    public static final String awsResponseFile = resourceBasePath + "aws-responses.json";
 
     public static List<Pair<String, String>> getTextAndTargetLanguageSamples(String filePath) {
         List<Pair<String, String>> texts = new ArrayList<>();
@@ -79,18 +78,23 @@ public class ReadAndTranslateData {
     }
 
     public static void main(String[] args) {
-        Translate translateSvc = GoogleTranslateV2.createTranslateService(GoogleTranslateV2.API_KEY);
+        // Translate translateSvc = GoogleTranslateV2.createTranslateService(GoogleTranslateV2.API_KEY);
         ArrayList<UniversalTranslationResponse> responses = new ArrayList<>();
         int counter = 0;
+        int char_counter = 0;
 
-        for (Pair<String, String> textLanguagePair: getTextAndTargetLanguageSamples(googleTranslateResponsesFile)) {
+        for (Pair<String, String> textLanguagePair: getTextAndTargetLanguageSamples(resourceBasePath + "latest-data-filtered.json")) {
+            char_counter += textLanguagePair.getFirst().length();
+            if (char_counter > 3_500_000) {
+                break;
+            }
+
             System.out.println("Translating string #" + counter++);
-            // responses.add(AWSTranslate.translate(textLanguagePair.getFirst(), "auto", textLanguagePair.getSecond()));
-            // ConvertToJson.saveJsonToFile(responses, awsResponseFile);
-            responses.add(GoogleTranslateV2.translateText(translateSvc, textLanguagePair.getFirst(), textLanguagePair.getSecond()));
-            ConvertToJson.saveJsonToFile(responses, googleTranslateV2ResponsesFile);
+            System.out.println("Total characters translated until now: " + char_counter);
+            System.out.printf("--------------------------------------------------");
+            responses.add(AWSTranslate.translate(textLanguagePair.getFirst(), "auto", textLanguagePair.getSecond()));
         }
 
-        ConvertToJson.saveJsonToFile(responses, googleTranslateV2ResponsesFile);
+        ConvertToJson.saveJsonToFile(responses, awsResponseFile);
     }
 }

@@ -1,0 +1,124 @@
+GET monitoring_*/_search
+{
+  "track_total_hits": false,
+  "sort": [
+    {
+      "timestamp": {
+        "order": "desc",
+        "unmapped_type": "boolean"
+      }
+    },
+    {
+      "attributes.length": {
+        "order": "desc",
+        "unmapped_type": "boolean"
+      }
+    }
+  ],
+  "fields": [
+    {
+      "field": "attributes.targetLanguage"
+    },
+    {
+      "field": "attributes.language"
+    },
+    {
+      "field": "attributes.requestBody"
+    },
+    {
+      "field": "attributes.responseBody"
+    },
+    {
+      "field": "ctxPId"
+    },
+    {
+      "field": "timestamp",
+      "format": "strict_date_optional_time"
+    }
+  ],
+  "size": 10000,
+  "version": true,
+  "script_fields": {},
+  "stored_fields": [
+    "*"
+  ],
+  "runtime_mappings": {},
+  "_source": false,
+  "query": {
+    "bool": {
+      "must": [],
+      "filter": [
+        {
+          "bool": {
+            "filter": [
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "match_phrase": {
+                        "attributes.serviceType": "GOOGLE_TRANSLATE"
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              },
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "exists": {
+                        "field": "attributes.requestBody"
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              },
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "exists": {
+                        "field": "attributes.responseBody"
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              },
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "exists": {
+                        "field": "attributes.length"
+                      }
+                    }
+                  ],
+                  "minimum_should_match": 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "range": {
+            "timestamp": {
+              "format": "strict_date_optional_time",
+              "gte": "2024-12-10T17:45:29.949Z",
+              "lte": "2024-12-11T17:45:29.949Z"
+            }
+          }
+        },
+        {
+          "match_phrase": {
+            "attributes.operation": "translate"
+          }
+        }
+      ],
+      "should": [],
+      "must_not": []
+    }
+  }
+}

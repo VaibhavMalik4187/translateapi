@@ -60,7 +60,9 @@ def compare_responses(api_responses, reference_responses):
       print(f"Skipping comparison for pair {i+1}: Reference response is None")
       skipped += 1
       continue
-
+    elif len(translated) == 0:
+      skipped += 1
+      continue
 
     # Tokenize the strings (modify for your use case)
     reference_tokens = reference.split()
