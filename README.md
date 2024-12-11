@@ -1,2 +1,0 @@
-# translateapi
-Libre Translate API
